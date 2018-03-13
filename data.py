@@ -13,6 +13,7 @@ print("Property Size: " + str(prop.shape))
 
 # Merge train with prop
 df = train.merge(prop, how='left', on='parcelid')
+#df = prop
 del train, prop
 print("\nMERGED\n------")
 print(df.head(2).transpose())
@@ -75,8 +76,9 @@ df.loc[df['fireplacecnt'] > 0, 'fireplaceflag'] = 1.0
 
 # decktypeid has only one type - Change it to be deckflag
 print("Deck type:\n" + str(df['decktypeid'].value_counts()) + "\n")
-df.loc[df['decktypeid'].isnull() == False] = 1.0
-df.rename(columns={'decktypeid':'deckflag'}, inplace=True)
+df.loc[df['decktypeid'].isnull() == False, 'deckflag'] = 1.0
+#df.rename(columns={'decktypeid':'deckflag'}, inplace=True)
+dropcols.append('decktypeid')
 
 # Drop accumulated columns
 print("Columns to drop:\n" + str(dropcols) + "\n")
@@ -103,3 +105,7 @@ df['propertylandusetypeid'] = df['propertylandusetypeid'].astype('category')
 
 # Print info
 print(df.info())
+
+
+# Export the merged data
+df.to_csv('data/merged_2016.csv', index=False)
